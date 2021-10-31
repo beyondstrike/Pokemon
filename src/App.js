@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { ChakraProvider } from "@chakra-ui/react";
+
+//screens
+import { Home, MyPokemon, PokemonDetails } from "./screens";
+
+//contexts
+import { PokemonContext } from "./context";
+
+//api
+import { getAll } from "./api/PokemonAPI";
 
 function App() {
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    getAll().then((res) => setData(res));
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <PokemonContext.Provider value={{ data }}>
+      <ChakraProvider>
+        <Router>
+          <Switch>
+            <Route path="/PokemonDetails/:id" component={PokemonDetails} />
+            <Route path="/MyPokemon" component={MyPokemon} />
+            <Route path="/*" component={Home} />
+          </Switch>
+        </Router>
+      </ChakraProvider>
+    </PokemonContext.Provider>
   );
 }
 
